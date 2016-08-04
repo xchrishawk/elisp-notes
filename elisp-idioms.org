@@ -28,3 +28,50 @@ is a buffer object, the first statement (=(bufferp buffer)=) returns =t=, so
 the =or= form immediately returns without executing the next function. Otherwise,
 =buffer= is set to =(get-buffer buffer)=. If *that* returns nil, buffer is set
 to the current buffer.
+
+
+** Prefix Arguments
+
+The "P" and "p" arguments allow interactive functions to use "prefix" arguments,
+which are numeric arguments specified with the universal argument key (=C-u=).
+
+When the lower-case "p" argument specifier is used, the universal argument is
+*always* converted to a number before being passed to the function.
+
+#+BEGIN_SRC emacs-lisp
+  (defun prefix-func (arg)
+    (interactive "p")
+    (message "Prefix argument was %d" arg))
+#+END_SRC
+
+For the above function...
+
+- =M-x prefix-func= prints =Prefix argument was 1=
+- =C-u M-x prefix-func= prints =Prefix argument was 4=
+- =C-u 10 M-x prefix-func= prints =Prefix argument was 10=
+
+When the upper-case "P" argument specifier is used, several different things can
+be passed as an argument:
+
+- If no argument was provided, the argument is nil
+- If an unqualified prefix argument (some set of =C-u= without number) was provided,
+  the argument is the corresponding number in a list.
+- If a qualified prefix argument was provided, the argument is the number *not*
+  in a list.
+
+For example:
+
+#+BEGIN_SRC emacs-lisp
+  (defun raw-prefix-func (arg)
+    (interactive "P")
+    (message "Prefix argument was %s" arg))
+#+END_SRC
+
+- =M-x raw-prefix-func= prints =Prefix argument was nil=
+- =C-u M-x raw-prefix-func= prints =Prefix argument was (4)=
+- =C-u C-u M-x raw-prefix-func= prints =Prefix argument was (16)=
+- =C-u 10 M-x raw-prefix-func= prints =Prefix argument was 10=
+
+If needed, a "raw" prefix argument can be converted to a numeric prefix argument
+using the =(prefix-numeric-value)= function. For example, =(prefix-numeric-value nil)=
+returns 1.
