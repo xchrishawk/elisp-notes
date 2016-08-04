@@ -1,0 +1,30 @@
+* Emacs Lisp Idioms
+
+This file contains some useful idioms when programming in Emacs Lisp.
+
+
+** Use of "or"
+
+The =or= form can be used to execute only one of a set of candidate functions.
+It will evaluate each subexpression until one returns a non-nil value, and then
+returns that non-nil value. As an example:
+
+#+BEGIN_SRC emacs-lisp
+  (defun do-thing-with-buffer (buffer)
+    (or (bufferp buffer)
+        (setq buffer (get-buffer buffer))
+        (setq buffer (current-buffer)))
+    (buffer-name buffer))
+
+  (do-thing-with-buffer "this buffer doesn't exist")
+#+END_SRC
+
+#+RESULTS:
+: elisp-idioms.org
+
+Something like the above is often used to allow either a buffer object or a
+buffer name (as a string) to be passed to a function. If the argument =buffer=
+is a buffer object, the first statement (=(bufferp buffer)=) returns =t=, so
+the =or= form immediately returns without executing the next function. Otherwise,
+=buffer= is set to =(get-buffer buffer)=. If *that* returns nil, buffer is set
+to the current buffer.
