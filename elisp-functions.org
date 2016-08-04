@@ -1,0 +1,88 @@
+* Useful Functions
+
+This document contains a quick list of useful Elisp functions, along with a brief
+description of what they do. It is not intended to be documentation (use the Emacs
+documentation for that - =C-h f=), but rather just as a quick "menu" to help find
+useful functions.
+
+
+** Lisp Interaction
+
+- interactive :: mark function as interactive, define how to get arguments
+- message :: display message in echo area
+- prefix-numeric-value :: convert a raw prefix argument to a numeric value
+
+
+** Variables
+
+- set :: sets the value of a variable
+- setq :: same as set, except automatically quotes, and allows setting multiple variables
+- eq :: returns t if the arguments refer to the same object
+- equal :: returns t if the arguments are semantically equal
+
+
+** Math/Logic
+
+- <, >, <=, >=, = :: basic mathematical operators
+- +, -, *, / :: basic arithmetic
+- and, or, not :: basic logic
+
+
+** Strings
+
+- string<, string-lessp :: string comparison (same function)
+- string=, string-equal :: string equality (same function)
+
+
+** Excursions
+
+- save-current-buffer :: save current buffer, execute body, then return to original
+- save-excursion :: like save-current-buffer, but saves point and mark as well
+- with-current-buffer :: save-current-buffer with built-in set-buffer
+
+
+** Point
+
+- goto-char :: moves point to the specified character index
+- point :: returns the current value of point as a character index
+- point-max :: returns the maximum valid value of point for the active buffer
+- point-min :: returns the minimum valid value of point for the active buffer
+
+
+** Mark/Region
+
+- push-mark :: set mark at the current location of point
+- region-beginning :: returns the index of the start of region
+- region-end :: returns the index of the end of region
+
+
+** Buffers
+
+- append-to-buffer :: insert part of current buffer into specified buffer at point
+- barf-if-buffer-read-only :: display error and quit if buffer is read only
+- buffer-file-name :: return name of file buffer is visiting
+- buffer-name :: return name of buffer
+- bufferp :: return t if argument is a buffer
+- copy-to-buffer :: replace text in specified buffer with part of current buffer
+- current-buffer :: returns current buffer
+- erase-buffer :: empties current buffer
+- get-buffer :: gets the buffer with the specified name
+- get-buffer-create :: gets buffer with specified name, creating it if it doesn't exist
+- insert-buffer :: inserts contents of specified buffer
+- other-buffer :: switch to most recently used buffer not currently displayed
+- set-buffer :: edit (but don't display) specified buffer for duration of this command
+- switch-to-buffer :: changes active window to display specified buffer
+
+
+** Windows
+
+- get-buffer-window :: return a window displaying buffer, or nil if no match
+- get-buffer-window-list :: return list of all windows displaying buffer
+- window-point :: returns the value of point in the specified window
+- set-window-point :: sets the value of point in the specified window
+
+
+** Text Editing
+
+- insert :: insert text at point
+- insert-buffer-substring :: insert some portion of a different buffer
