@@ -30,6 +30,23 @@ the =or= form immediately returns without executing the next function. Otherwise
 to the current buffer.
 
 
+** Else In cond Statements
+
+Emacs Lisp does not directly have an =else= statement equivalent when using a
+=cond= form. Instead, you specify the condition as =t=. For example:
+
+#+BEGIN_SRC emacs-lisp
+  (setq x 5)
+  (cond
+   ((< x 5) "x is less than 5")
+   ((> x 5) "x is greater than 5")
+   (t "x is equal to 5"))
+#+END_SRC
+
+#+RESULTS:
+: x is equal to 5
+
+
 ** Prefix Arguments
 
 The "P" and "p" arguments allow interactive functions to use "prefix" arguments,
@@ -71,6 +88,18 @@ For example:
 - =C-u M-x raw-prefix-func= prints =Prefix argument was (4)=
 - =C-u C-u M-x raw-prefix-func= prints =Prefix argument was (16)=
 - =C-u 10 M-x raw-prefix-func= prints =Prefix argument was 10=
+
+When using the "P" argument, you can use the above to distinguish the different
+types of arguments which could be passed to the function. For example:
+
+#+BEGIN_SRC emacs-lisp
+  (defun arg-type (arg)
+    (interactive "P")
+    (cond
+     ((consp arg) (message "unqualified universal argument"))
+     ((numberp arg) (message "numeric argument"))
+     (t (message "no argument"))))
+#+END_SRC
 
 If needed, a "raw" prefix argument can be converted to a numeric prefix argument
 using the =(prefix-numeric-value)= function. For example, =(prefix-numeric-value nil)=
