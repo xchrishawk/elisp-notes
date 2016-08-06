@@ -1,9 +1,9 @@
 * Useful Functions
 
-This document contains a quick list of useful Elisp functions, along with a brief
-description of what they do. It is not intended to be documentation (use the Emacs
-documentation for that - =C-h f=), but rather just as a quick "menu" to help find
-useful functions.
+This document contains a quick list of useful Elisp functions and variables, along
+with a brief description of what they do. It is not intended to be documentation
+(use the Emacs documentation for that - =C-h f=), but rather just as a quick "menu"
+to help find useful functions.
 
 
 ** Lisp Interaction
@@ -38,7 +38,10 @@ useful functions.
 
 - save-current-buffer :: save current buffer, execute body, then return to original
 - save-excursion :: like save-current-buffer, but saves point and mark as well
+- save-restriction :: saves current narrow/wide state, executes body, then returns
+- save-selected-window :: saves selected window, execute body, then return
 - with-current-buffer :: save-current-buffer with built-in set-buffer
+- with-selected-window :: like with-current-buffer
 
 
 ** Point
@@ -47,13 +50,20 @@ useful functions.
 - point :: returns the current value of point as a character index
 - point-max :: returns the maximum valid value of point for the active buffer
 - point-min :: returns the minimum valid value of point for the active buffer
+- search-forward :: move point to immediately after first instance of string
 
 
 ** Mark/Region
 
+- mark :: get current value of mark
 - push-mark :: set mark at the current location of point
 - region-beginning :: returns the index of the start of region
 - region-end :: returns the index of the end of region
+
+
+** Killing Text
+
+- kill-region :: kills the region between two points
 
 
 ** Buffers
@@ -61,6 +71,7 @@ useful functions.
 - append-to-buffer :: insert part of current buffer into specified buffer at point
 - barf-if-buffer-read-only :: display error and quit if buffer is read only
 - buffer-file-name :: return name of file buffer is visiting
+- buffer-modified-p :: returns t if buffer is modified
 - buffer-name :: return name of buffer
 - bufferp :: return t if argument is a buffer
 - copy-to-buffer :: replace text in specified buffer with part of current buffer
@@ -70,19 +81,32 @@ useful functions.
 - get-buffer-create :: gets buffer with specified name, creating it if it doesn't exist
 - insert-buffer :: inserts contents of specified buffer
 - other-buffer :: switch to most recently used buffer not currently displayed
+- read-only-mode :: switch buffer in or out of read only mode
 - set-buffer :: edit (but don't display) specified buffer for duration of this command
+- set-buffer-modified-p :: set or clear buffer modified flag
 - switch-to-buffer :: changes active window to display specified buffer
+- with-output-to-temp-buffer :: create and display temporary buffer in "help" mode
 
 
 ** Windows
 
 - get-buffer-window :: return a window displaying buffer, or nil if no match
 - get-buffer-window-list :: return list of all windows displaying buffer
-- window-point :: returns the value of point in the specified window
+- select-window :: sets the selected window
 - set-window-point :: sets the value of point in the specified window
+- window-point :: returns the value of point in the specified window
 
 
 ** Text Editing
 
 - insert :: insert text at point
 - insert-buffer-substring :: insert some portion of a different buffer
+
+
+* Useful Variables
+
+
+** Buffers
+
+- buffer-read-only :: set to t if buffer is read-only
+- kill-ring :: the current kill ring
