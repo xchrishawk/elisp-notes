@@ -1,0 +1,107 @@
+* Emacs Lisp Quick Reference
+
+
+** Symbols
+
+
+*** Getting Information About Symbols
+
+See [[info:elisp#Symbol%20Components][info:elisp#Symbol Components]] for additional details.
+
+- symbol-file :: returns the name of the file that defined a symbol.
+- symbol-function :: returns the contents of a symbol's function cell.
+- symbol-name :: returns the contents of a symbol's print name cell.
+- symbol-plist :: returns the contents of a symbol's property list cell.
+- symbol-value :: returns the contents of a symbol's value cell.
+- symbolp :: returns =t= if the argument is a symbol.
+
+
+*** Defining Symbols
+
+See [[info:elisp#Definitions]] for additional details.
+
+- defalias :: define symbol as a function alias.
+- defconst :: define symbol as a constant variable.
+- defcustom :: define symbol as a customizable variable.
+- defmacro :: define symbol as a macro.
+- defsubst :: define symbol as an in-line function.
+- defun :: define symbol as a function.
+- defvar :: define symbol as variable.
+
+
+*** Creating and Interning Symbols
+
+See [[info:elisp#Creating%20Symbols][info:elisp#Creating Symbols]] for additional details.
+
+- intern :: create and intern symbol, or return it if it already exists.
+- intern-soft :: return symbol if it exists, or =nil= if not.
+- make-symbol :: return newly allocated, uninterned symbol with specified name.
+- mapatoms :: calls a function once with each symbol in an obarray.
+- obarray :: /(variable)/ the default global obarray.
+- unintern :: deletes a symbol from an obarray.
+
+#+BEGIN_SRC emacs-lisp
+  (setq my-symbol (make-symbol "bob"))    ; 'bob
+  (intern-soft "bob")                     ; nil
+  (intern "bob")                          ; 'bob
+  (intern-soft "bob")                     ; 'bob
+  (unintern "bob")                        ; t
+  (intern-soft "bob")                     ; nil
+  (unintern "bob")                        ; nil
+#+END_SRC
+
+
+*** Symbol Property Lists
+
+See [[info:elisp#Symbol%20Plists][info:elisp#Symbol Plists]] for additional details, and [[info:elisp#Standard%20Properties][info:elisp#Standard Properties]]
+for a list of standard symbol properties.
+
+- get :: gets the specified property from a symbol.
+- put :: sets the specified property for a symbol.
+- setplist :: replaces the property list for a symbol.
+
+#+BEGIN_SRC emacs-lisp
+  (intern "mysymbol")             ; 'mysymbol
+  (get 'mysymbol 'myprop)         ; 'nil
+  (put 'mysymbol 'myprop 5)       ; 5
+  (get 'mysymbol 'myprop)         ; 5
+#+END_SRC
+
+
+** Functions
+
+
+*** Getting Information About Functions
+
+See [[info:elisp#What%20Is%20a%20Function][info:elisp#What Is a Function]] for additional details.
+
+- byte-code-function-p :: returns =t= if the argument is a byte code function.
+- functionp :: returns =t= if the argument is a callable function or symbol.
+- subr-arity :: returns the arity of a function object.
+- subrp :: returns =t= if the argument is a built-in function object.
+- symbol-function :: returns the object in the function cell of a symbol.
+
+#+BEGIN_SRC emacs-lisp
+  (functionp 'kill-region)                ; t
+  (functionp "abc")                       ; nil
+  (functionp (symbol-function 'car))      ; t
+  (subrp 'car)                            ; error! not a function
+  (subrp (symbol-function 'car))          ; t
+  (subr-arity (symbol-function 'insert))  ; (0 . many)
+#+END_SRC
+
+
+*** Executing Functions
+
+See [[info:elisp#Calling%20Functions][info:elisp#Calling Functions]] for additional details.
+
+- apply :: like =funcall=, but last argument may be a list of arguments to pass
+- funcall :: calls a function or function symbol (not special form)
+
+#+BEGIN_SRC emacs-lisp
+  (funcall (lambda (x) (+ x 1)) 5)        ; 6
+  (funcall 'sqrt 25)                      ; 5.0
+  (funcall (symbol-function 'sqrt) 25)    ; 5.0
+  (funcall 'and t t)                      ; error! and is a special form
+  (apply '+ 1 (list 2 3))                 ; 6
+#+END_SRC

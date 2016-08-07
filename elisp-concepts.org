@@ -1,10 +1,61 @@
 * Emacs Lisp Concepts
 
 
+** Symbols
+
+A *symbol* is an object with a unique name. Each symbol has four components or
+"cells", which reference another object:
+
+- print name :: the symbol's name
+- value :: the symbol's current value as a variable
+- function :: the symbol's function definition. Can also be a symbol, keymap,
+  or keyboard macro.
+- property list :: the symbol's property list
+
+The print name cell always holds a string, and is immutable. All other cells may
+be changed.
+
+
+*** Defining Symbols
+
+There are several constructs which allow defining symbols and announcing the
+intent to use them in a specific way.
+
+- defvar :: defines a symbol as a global variable. Sets the value cell
+- defconst :: defines a symbol as a global constant. Sets the value cell
+- defcustom :: defines a symbol as a customizable variable. Sets the value cell.
+- defun :: defines a symbol as a function. Sets the function cell.
+- defalias :: defines a symbol as a function alias. Sets the function cell.
+- defsubst :: defines a symbol as an inline function. Sets the function cell.
+- defmacro :: defines a symbol as a macro. Sets the function cell.
+
+The above forms also provide information to Emacs on how interactive help (using
+=C-h f= and =C-h v= should display information on the symbol.
+
+
+*** Symbol Creation and Interning
+
+Emacs symbols are interned in a global hash table called the *obarray*. When the
+reader encounters a symbol, it hashes the name, and then searches the bucket for
+that hash code in the obarray. If a match is found, that symbol object is
+returned, otherwise a new entry is created, added to the obarray, and returned.
+
+Not all symbols are interned. It is sometimes useful to have an uninterned
+symbol, since it is guaranteed to not conflict with any other symbol.
+
+
+*** Symbol Property List
+
+Symbols may have an arbitrary *property list* stored in the symbol's property
+list cell. The property list stores miscellaneous information about the symbol.
+There is a set of standard properties which may be defined for certain symbol
+types, however, arbitrary properties are allowed as well.
+
+
 ** Functions
 
-A function is a rule for carrying out a computation given input values called
-"arguments". The result of the computation is the "value" or "return value" of
+A *function* is a rule for carrying out a computation given input values called
+*arguments*. The result of the computation is the *value* or *return value* of
 the function.
 
 Emacs Lisp supports several types of functions:
