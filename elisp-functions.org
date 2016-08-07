@@ -15,10 +15,25 @@ to help find useful functions.
 
 ** Variables
 
+- boundp :: returns =t= if the symbol has a value bound to it.
+- eq :: returns =t= if the arguments refer to the same object
+- equal :: returns =t= if the arguments are semantically equal
+- makunbound :: unbinds a symbol's value.
 - set :: sets the value of a variable
 - setq :: same as set, except automatically quotes, and allows setting multiple variables
-- eq :: returns t if the arguments refer to the same object
-- equal :: returns t if the arguments are semantically equal
+
+
+** Functions
+
+- apply :: like funcall, but allows specifying arguments as a list
+- defalias :: defines a new alias name for a function
+- defun :: defines a named function
+- defsubst :: defines an inline function
+- fboundp :: returns =t= if the symbol has an object in its function cell.
+- fmakunbound :: deletes the value in a symbol's function cell
+- fset :: sets the value in a symbol's function cell
+- funcall :: calls an arbitrary function
+- symbol-function :: returns the object in the function cell of a symbol.
 
 
 ** Math/Logic
@@ -32,6 +47,14 @@ to help find useful functions.
 
 - string<, string-lessp :: string comparison (same function)
 - string=, string-equal :: string equality (same function)
+
+
+** Lists
+
+- mapc :: maps a function over a list for side effects and discards results
+- mapcar :: maps a function over a list and returns a list of results
+- mapconcat :: maps function over a list, returns concatenated string result with
+  optional separator
 
 
 ** Excursions
@@ -71,9 +94,9 @@ to help find useful functions.
 - append-to-buffer :: insert part of current buffer into specified buffer at point
 - barf-if-buffer-read-only :: display error and quit if buffer is read only
 - buffer-file-name :: return name of file buffer is visiting
-- buffer-modified-p :: returns t if buffer is modified
+- buffer-modified-p :: returns =t= if buffer is modified
 - buffer-name :: return name of buffer
-- bufferp :: return t if argument is a buffer
+- bufferp :: return =t= if argument is a buffer
 - copy-to-buffer :: replace text in specified buffer with part of current buffer
 - current-buffer :: returns current buffer
 - erase-buffer :: empties current buffer
@@ -90,7 +113,7 @@ to help find useful functions.
 
 ** Windows
 
-- get-buffer-window :: return a window displaying buffer, or nil if no match
+- get-buffer-window :: return a window displaying buffer, or =nil= if no match
 - get-buffer-window-list :: return list of all windows displaying buffer
 - select-window :: sets the selected window
 - set-window-point :: sets the value of point in the specified window
@@ -103,10 +126,18 @@ to help find useful functions.
 - insert-buffer-substring :: insert some portion of a different buffer
 
 
+** Keyboard Commands
+
+- current-active-maps :: return all active keymaps
+- copy-keymap :: make a copy of a keymap
+- kbd :: get key command from a string (e.g., "C-x C-a")
+- keymapp :: predicate returning =t= if the argument is a keymap
+- make-keymap :: make a new keymap with slots for all keys
+- make-sparse-keymap :: make a new sparse (empty) keymap
+
+
 * Useful Variables
 
-
-** Buffers
-
-- buffer-read-only :: set to t if buffer is read-only
+- buffer-read-only :: set to =t= if buffer is read-only
+- global-map :: the default global keyboard map
 - kill-ring :: the current kill ring

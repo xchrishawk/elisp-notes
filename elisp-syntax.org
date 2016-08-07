@@ -1,0 +1,156 @@
+* Emacs Lisp Concepts
+
+
+** Functions
+
+A function is a rule for carrying out a computation given input values called
+"arguments". The result of the computation is the "value" or "return value" of
+the function.
+
+Emacs Lisp supports several types of functions:
+
+- lambda expression :: A function written in Lisp.-
+- primitive :: A function written in C, normally because it forms a fundamental
+  part of Lisp (like =car=, =cdr=, etc.), because it uses low-level OS services,
+  or for speed.
+- special form :: A primitive that is like a function, but does not evaluate all
+  of its arguments in the normal way (e.g., =if=, =and=, etc.)
+- macro :: A construct defined in Lisp which converts a Lisp expression into
+  another expression, which is then evaluated in place of the original
+  expression.
+- command :: A function which can be interactively invoked by the user using the
+  =execute-command= primitive.
+- closure :: A function like a lambda expression, which captures part of its
+  surrounding lexical environment.
+- byte-code-function :: A function compiled by the byte compiler.
+- autoload object :: A placeholder for a real function. If the autoload object
+  is called, Emacs loads the file containing the definition of the function, and
+  then calls the real function.
+
+
+*** Basic Syntax
+
+A lambda expression is of the form:
+
+#+BEGIN_SRC emacs-lisp
+  (lambda (ARGS ...)
+    DOCUMENTATION-STRING
+    INTERACTIVE-DECLARATION
+    BODY-FORMS ...)
+#+END_SRC
+
+
+*** Naming Functions
+
+For convenience, a name can be associated with a function. This occurs when the
+"function cell" (see [[info:elisp#Symbol%20Components][info:elisp#Symbol Components]]) of a symbol contains a
+lambda expression object. This is most commonly done using the =defun= form:
+
+#+BEGIN_SRC emacs-lisp
+  (defun my-func (x)
+    (+ x 1))
+  (my-func 4)	; returns 5
+#+END_SRC
+
+Less commonly, this can be done with the =fset= function:
+
+#+BEGIN_SRC emacs-lisp
+  (fset 'my-func (lambda (x) (- x 1)))
+  (my-func 4)	; returns 3
+#+END_SRC
+
+Note that functions and variables inhabit different namespaces in Emacs Lisp
+(unlike Scheme and some other dialects). Therefore it perfectly valid to have
+both a function and a variable named =foo=, both of which will be independent
+from each other.
+
+
+*** Execution
+
+Named functions may be executed directly:
+
+#+BEGIN_SRC emacs-lisp
+  (defun square (x)
+    (* x x))
+  (square 5)    ; returns 25
+#+END_SRC
+
+Arbitrary functions (either as symbols, or as lambda functions) are executed by
+passing them to the =funcall= function:
+
+#+BEGIN_SRC emacs-lisp
+  (funcall (lambda (x) (+ x 1)) 5)	; returns 6
+  (funcall 'square 6)			; returns 36
+#+END_SRC
+
+The =apply= function is similar to =funcall=, except that the last argument may
+be a list which is expanded to fill the function's argument list.
+
+#+BEGIN_SRC emacs-lisp
+  (apply '+ '(1 2 3 4))   ; returns 10
+#+END_SRC
+
+
+*** Optional Arguments
+
+Function argument lists support optional arguments using the =&optional=
+specifier. If the arguments are not specified, they default to nil.
+
+#+BEGIN_SRC emacs-lisp
+  (defun add (x &optional y)
+    (or y (setq y 1))
+    (+ x y))
+
+  (add 5 10)      ; returns 15
+  (add 5)         ; returns 6
+#+END_SRC
+
+Optional arguments must follow all non-optional arguments.
+
+
+*** Rest Arguments
+
+Argument lists also support variadic functions in the form of "rest" arguments,
+using the =&rest= specifier. This allows the caller to specify an arbitrary
+number of arguments, which are passed to the function as a list.
+
+#+BEGIN_SRC emacs-lisp
+  (defun variadic (&rest items)
+    (dolist (item items)
+      (insert item)))
+
+  (variadic "this" "is" "variadic")
+#+END_SRC
+
+Rest arguments must follow all non-optional and optional named arguments.
+
+
+*** Documentation Strings
+
+Functions support "documentation strings", which is an arbitrary string
+immediately after the argument list. The documentation string is displayed by
+the Emacs help system when the user searches for help on a function (using the
+=C-h f= keystroke).
+
+For example:
+
+#+BEGIN_SRC emacs-lisp
+  (defun square (x)
+    "Returns the square of X."
+    (* x x))
+#+END_SRC
+
+There are numerous conventions which should be followed and special string
+tokens which may be used when writing documentation strings. See the Emacs Lisp
+manual for further details.
+
+
+*** Function Aliases
+
+The =defalias= form may be used to create an "alias" for a function. A new
+documentation string may optionally be specified.
+
+#+BEGIN_SRC emacs-lisp
+  (defalias 'add '+ "Add, except spiffier.")
+  (add 1 2 3)	; returns 6
+#+END_SRC
