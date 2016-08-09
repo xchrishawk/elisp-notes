@@ -51,6 +51,22 @@ See [[info:elisp#Creating%20Symbols][info:elisp#Creating Symbols]] for additiona
 #+END_SRC
 
 
+*** Symbol Binding
+
+- boundp :: returns =t= if the symbol's value cell is not void.
+- fboundp :: returns =t= if the symbol's function cell is not void.
+- fmakunbound :: removes the function from the symbol's function cell.
+- makunbound :: removes the value from the symbol's value cell.
+
+#+BEGIN_SRC emacs-lisp
+  (setq myvar "hello")
+  (boundp 'myvar)         ; t
+  (makunbound 'myvar)
+  (boundp 'myvar)         ; nil
+  (message myvar)         ; error! variable is void
+#+END_SRC
+
+
 *** Symbol Property Lists
 
 See [[info:elisp#Symbol%20Plists][info:elisp#Symbol Plists]] for additional details, and [[info:elisp#Standard%20Properties][info:elisp#Standard Properties]]
@@ -66,6 +82,30 @@ for a list of standard symbol properties.
   (put 'mysymbol 'myprop 5)       ; 5
   (get 'mysymbol 'myprop)         ; 5
 #+END_SRC
+
+
+** Variables
+
+
+*** Setting Variables
+
+- set :: set value of symbol
+- setq :: set value of quoted symbol
+
+
+*** Buffer-Local Variables
+
+- buffer-local-value :: get buffer-local binding of variable in a buffer
+- buffer-local-variables :: get list of buffer-local variables in a buffer
+- defvar-local :: same as =defvar= followed by =make-variable-buffer-local=
+- kill-all-local-variables :: deletes all buffer-local bindings
+- kill-local-variable :: delete buffer-local binding of variable
+- local-variable-if-set-p :: returns =t= if argument either has buffer-local
+  binding, or is automatically buffer-local.
+- local-variable-p :: returns =t= if argument is buffer local in specified buffer
+- make-local-variable :: create buffer-local binding for variable in this buffer
+- make-variable-buffer-local :: create automatically buffer-local variable
+- setq-local :: same as =make-local-variable= followed by =setq=
 
 
 ** Functions

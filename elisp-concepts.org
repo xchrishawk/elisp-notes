@@ -52,6 +52,162 @@ There is a set of standard properties which may be defined for certain symbol
 types, however, arbitrary properties are allowed as well.
 
 
+** Variables
+
+A *variable* is a name used in a program to stand for a value. In Lisp, each
+variable is represented by a *symbol*. The variable name is the symbol's name,
+and the variable's value is the stored in the symbol's value cell.
+
+
+*** Global Variables
+
+A *global variable* has a single value throughout the entire Lisp system,
+regardless of who is accessing it. The variable has only one value at a time,
+and that value remains in effect until it is replaced with a new value. When the
+value is replaced, no trace remains of the old value.
+
+The value of a symbol can be specified with =set= or =setq=. =setq= is like
+=set=, except that it implicitly quotes symbol names, and can be used to set
+more than one variable at a time.
+
+#+BEGIN_SRC emacs-lisp
+  (set 'myvar 5)                  ; myvar = 5
+  (setq myvar 6)                  ; myvar = 6
+  (setq myvar 7 myothervar 8)     ; myvar = 7, myothervar = 8
+#+END_SRC
+
+
+*** Defining Global Variables
+
+The =defvar= and =defconst= constructs are used to define a global
+variable. These are not mandatory, however, they serve several purposes:
+
+- Informs readers of the code that the symbol is intended to be used a certain
+  way
+- Informs the Lisp system how the symbol should be used (for live documentation
+  and tagging purposes)
+
+=defconst= does /not/ actually define hard constants - the Lisp system does not
+prevent modifying the value of a =defconst=. The difference is primarily for
+documentation purposes. Also, a =defconst= always unconditionally sets the value
+of its symbol, while =defvar= only does so if the value is initially void.
+
+
+*** Local Variables
+
+Local variables exist only in some specific scope, normally a function or
+special form in a program. There are several ways to define a local variable:
+
+- As an argument to a function
+- Using the =let= or =let*= special forms
+
+Local variables *shadow* the binding of a variable at higher scopes. The
+"higher-level" binding is not destroyed, but is overwritten in a specific scope
+by the local variable. For example, in the example below, the variable
+=the-text= is restored to its original binding when execution leaves the inner scope.
+
+#+BEGIN_SRC emacs-lisp
+  (setq the-text "global scope")
+  (message the-text)                      ; prints "global scope"
+
+  (let ((the-text "let scope"))
+    (message the-text)                    ; prints "let scope"
+    (let ((the-text "inner let scope"))
+      (message the-text))                 ; prints "inner let scope"
+    (message the-text))                   ; prints "let scope"
+
+  (message the-text)                      ; prints "global scope"
+#+END_SRC
+
+So in general, the value of a symbol is whatever the current inner-most binding
+of that symbol is. In addition, note that =setq= changes the value of the
+current binding of the symbol. For example, in the sample below, the =setq= in
+the =let= form changes the "let" binding, not the global binding.
+
+#+BEGIN_SRC emacs-lisp
+(setq the-text "hello")
+(message the-text)		; prints "hello"
+
+(let ((the-text "argh"))
+  (message the-text)		; prints "argh"
+  (setq the-text "bongo")
+  (message the-text))		; prints "bongo"
+
+(message the-text)		; prints "hello"
+#+END_SRC
+
+The =let*= special form is like =let=, except it allows the value of each
+variable to refer to the values of previously let variables.
+
+#+BEGIN_SRC emacs-lisp
+  (let ((x 5)
+        (y (+ x 1)))      ; error! x not defined here
+    (+ x y))
+
+  (let* ((x 5)
+         (y (+ x 1)))     ; this is ok
+    (+ x y))
+#+END_SRC
+
+
+*** Constant Variables
+
+Some variables, including =nil=, =t=, and keyword symbols (symbols beginning
+with a colon) are read-only. Any attempt to change their value results in a
+run-time error.
+
+
+*** Void Variables
+
+A symbol with an unassigned value cell is a *void variable*. Attempting to use a
+void variable results in a runtime error.
+
+The =boundp= function returns =t= if a symbol has a value in its value cell. The
+=makunbound= function removes the value from a symbol's value cell.
+
+
+*** Buffer-Local Variables
+
+In addition to global and local variables, Emacs Lisp also supports
+*buffer-local variables*, which are variables that have a specific binding only
+within a certain buffer. For example, if there is a global variable named =foo=,
+you can use the =make-local-variable= function to create a local binding for
+=foo= which is available only in the current buffer which "shadows" the global
+binding, just like a =let= statement would.
+
+You can also create *automatically buffer-local variables* using
+=make-variable-buffer-local=. These variables are automatically buffer-local in
+all buffers (even those yet to be created). They will use the default global
+binding /until/ they are set with =setq=, and then create a local binding which
+shadows the global binding. The default value cannot be set using =setq= in any
+buffer - you must use =setq-default= to change the default value.
+
+=fill-column= is an example of automatically buffer-local variable.
+
+There are also file-local and directory-local variables. See the documentation
+for more details.
+
+
+*** Generalized Variables With setf
+
+The =setf= macro can be used to set an arbitrary "place", rather than just a
+symbol value. The concept is similar to an *lvalue* in the C programming
+language, where an lvalue refers to a location that a value can be assigned to.
+
+The following example shows some sample uses of =setf=:
+
+#+BEGIN_SRC emacs-lisp
+  (setq my-list (list 1 2 3))     ; my-list = '(1 2 3)
+  (setf (car my-list) 2)          ; my-list = '(2 2 3)
+  (setf (cdr my-list) 7)          ; my-list = '(2 . 7)
+
+  (setq my-string "hello")        ; my-string = "hello"
+  (setf (aref my-string 1) ?f)    ; my-string = "hfllo"
+#+END_SRC
+
+See the documentation for more examples.
+
+
 ** Functions
 
 A *function* is a rule for carrying out a computation given input values called
