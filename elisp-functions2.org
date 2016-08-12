@@ -1,6 +1,47 @@
 * Emacs Lisp Quick Reference
 
 
+** Control Structures
+
+
+*** Sequencing
+
+See [[info:elisp#Sequencing]] for additional details.
+
+- prog1 :: execute statements in order, returning the first result
+- prog2 :: execute statements in order, returning the second result
+- progn :: execute statements in order, returning the last result
+
+
+*** Conditionals
+
+See [[info:elisp#Conditionals]] for additional details.
+
+- cond :: chooses between several branches based on multiple conditionals
+- if :: choose between two branches based on a conditional
+- pcase :: pattern matching case statement
+- unless :: execute statements only when a condition is false
+- when :: execute statements only when a condition is true
+
+
+*** Boolean Logic
+
+See [[info:elisp#Combining%20Conditions][info:elisp#Combining Conditions]] for additional details.
+
+- and :: boolean AND
+- not :: boolean NOT
+- or :: boolean OR
+
+
+*** Iteration
+
+See [[info:elisp#Iteration]] for additional details.
+
+- dolist :: execute block for each element in list
+- dotimes :: execute block a set number of times
+- while :: loop while a condition is true
+
+
 ** Symbols
 
 
