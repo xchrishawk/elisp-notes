@@ -9,7 +9,7 @@ A *symbol* is an object with a unique name. Each symbol has four components or
 - print name :: the symbol's name
 - value :: the symbol's current value as a variable
 - function :: the symbol's function definition. Can also be a symbol, keymap,
-  or keyboard macro.
+	      or keyboard macro.
 - property list :: the symbol's property list
 
 The print name cell always holds a string, and is immutable. All other cells may
@@ -218,21 +218,21 @@ Emacs Lisp supports several types of functions:
 
 - lambda expression :: A function written in Lisp.-
 - primitive :: A function written in C, normally because it forms a fundamental
-  part of Lisp (like =car=, =cdr=, etc.), because it uses low-level OS services,
-  or for speed.
+	       part of Lisp (like =car=, =cdr=, etc.), because it uses low-level
+               OS services, or for speed.
 - special form :: A primitive that is like a function, but does not evaluate all
-  of its arguments in the normal way (e.g., =if=, =and=, etc.)
+		  of its arguments in the normal way (e.g., =if=, =and=, etc.)
 - macro :: A construct defined in Lisp which converts a Lisp expression into
-  another expression, which is then evaluated in place of the original
-  expression.
+	   another expression, which is then evaluated in place of the original
+	   expression.
 - command :: A function which can be interactively invoked by the user using the
-  =execute-command= primitive.
+	     =execute-command= primitive.
 - closure :: A function like a lambda expression, which captures part of its
-  surrounding lexical environment.
+	     surrounding lexical environment.
 - byte-code-function :: A function compiled by the byte compiler.
-- autoload object :: A placeholder for a real function. If the autoload object
-  is called, Emacs loads the file containing the definition of the function, and
-  then calls the real function.
+- autoload-object :: A placeholder for a real function. If the autoload object
+     is called, Emacs loads the file containing the definition of the function, and
+     then calls the real function.
 
 
 *** Basic Syntax
@@ -361,3 +361,42 @@ documentation string may optionally be specified.
   (defalias 'add '+ "Add, except spiffier.")
   (add 1 2 3)	; returns 6
 #+END_SRC
+
+
+*** Advising Functions
+
+Emacs Lisp supports *advising* functions, which is a method of overriding a
+function's implementation and complementing it (or replacing it) with another
+function. Function advice can be added in several "locations":
+
+- before :: Advice is called before the old function. Both functions receive the
+            same arguments, and the return value is the return value of the old
+            function.
+- after :: Advice is called after the old function. Both functions receive the
+           same arguments, and the return value is the return value of the old
+           function.
+- override :: Old function is completely replaced with the advice (at least
+              until it is removed).
+- around :: Old function is completely replaced with the advice, however, the
+            old function is passed in as an argument to the advice. This is the
+            most flexible composition. The advice may call the old function, or
+            not, or call it multiple times, etc.
+- before-while :: Advice is called before the old function, and old function is
+                  called only if the advice does not return =nil=. The return
+                  value is the return value of the old function.
+- before-until :: Like =before-while=, except old function is only called if the
+                  advice *does* return =nil=.
+- after-while :: Advice is called after the old function, and only if the old
+                 function does not return =nil=. The return value is the return
+                 value of the advice.
+- after-until :: Like =after-while=, except advice is only called if the old
+                 function *does* return =nil=.
+- filter-args :: Advice is called first, and can update the arguments provided
+                 to the old function.
+- filter-return :: Old function is called first, and advice can update the
+                   return value.
+
+Advising functions should be reserved for situations where it is not possible to
+modify the existing function in any other way, since it is hard to debug and can
+lead to confusing behavior. Primitive (C) functions should not be advised, since
+the advice will not be used when the function is called from C code.
